@@ -1,10 +1,16 @@
 import isd.stations as stations
+import numpy as np
+
 
 stationList = stations.getStationList('isd-history.csv');
-subList = stations.subsetStationList(stationList,("WBAN"))
+subList = stations.subsetStationList(stationList,['USAF','WBAN','CTRY','STATE']);
+usData = stations.extractData(subList,'CTRY','US');
+nyData = stations.extractData(usData,'STATE','NY');
 
-print(stationList.keys())
+print len(nyData['USAF'])
 
-for row in subList: 
-    print(row)
+stations.downloadData('temp',nyData,2004,2004)
 
+
+# for i, val in enumerate(stationList['USAF']):
+  # print i
