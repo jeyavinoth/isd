@@ -16,8 +16,7 @@ def getStationList(filename):
   stationList = {}
   for row in dataIn:
     for iKey in row.keys():
-      stationList.setdefault(iKey,[]).append(row[iKey])
-
+      stationList.setdefault(iKey,[]).append(row[iKey]) 
   return stationList
 
   
@@ -214,21 +213,20 @@ def readFile(filename):
       sectionDef = line[105:108]
       variableData = line[108:105+numVarChar]
 
-      print (variableData)
+      print ("<-->Start: {0}".format(variableData))
       # looping through variableData to read in all sections
-      vCharCnt = -1
-      while (vCharCnt != 0):
+      sectionCharCnt = -1
+      tempCnt = numVarChar 
+      while (sectionCharCnt != 0):
         # reading in section by section
-        vCharCnt, sectionData  = extractVariableData(variableData)
+        sectionCharCnt, sectionData  = extractVariableData(variableData)
 
         # updating the temp dictionary to include the section data
         temp.update(sectionData)
        
         # removing the read section from variableData
-        variableData = variableData[vCharCnt:]
+        variableData = variableData[sectionCharCnt:]
 
-        print ("-->{0}".format(variableData))
-        
     records.append(temp)
     # print line
     # print temp
@@ -254,12 +252,65 @@ def extractVariableData(vData):
   # precipitation
   if (sectionID[:2] == 'AA'):
     sDict[sectionID] = vData[:15] 
-    cnt = cnt + 15
-  elif (sectionID == 'GD'):
-    sDict[sectionID] = vData[:15] 
-    cnt = cnt + 15
+    cnt = 15
+  elif (sectionID[:2] == 'GD'):
+    sectionSize = 15
+    # sDict[sectionID] = vData[:15] 
+    while sectionID[:2] == 'GD':
+      sDict.setdefault(sectionID[:2],[]).append(vData[:sectionSize])
+      vData = vData[sectionSize:]
+      sectionID = vData[:3]
+      cnt = cnt + sectionSize
+    print(sDict)
+  elif (sectionID[:2] == 'GF'):
+    sectionSize = 26
+    while sectionID[:2] == 'GF':
+      sDict.setdefault(sectionID[:2],[]).append(vData[:sectionSize])
+      vData = vData[sectionSize:]
+      sectionID = vData[:3]
+      cnt = cnt + sectionSize
+    print(sDict)
+  elif (sectionID[:2] == 'MA'):
+    sectionSize = 15 
+    while sectionID[:2] == 'MA':
+      sDict.setdefault(sectionID[:2],[]).append(vData[:sectionSize])
+      vData = vData[sectionSize:]
+      sectionID = vData[:3]
+      cnt = cnt + sectionSize
+    print(sDict)
+  elif (sectionID[:2] == 'MW'):
+    sectionSize = 6 
+    while sectionID[:2] == 'MW':
+      sDict.setdefault(sectionID[:2],[]).append(vData[:sectionSize])
+      vData = vData[sectionSize:]
+      sectionID = vData[:3]
+      cnt = cnt + sectionSize
+    print(sDict)
+  # remarks section
+  elif (sectionID == 'REM'):
+    sectionSize = 9 + int(vData[6:9])
+    sDict.setdefault(sectionID[:2],[]).append(vData[:sectionSize])
+    vData = vData[sectionSize:]
+    sectionID = vData[:3]
+    cnt = cnt + sectionSize
+    print(sDict)
+  # element quality data section
+  elif (sectionID == 'EQD'):
+    sectionSize = 16
+    vData = vData[3:]
+    print(vData)
+    sectionID = vData[0] 
+    while (sectionID in ['Q', 'P', 'R', 'C', 'D']):
+      sDict.setdefault('EQD',[]).append("EQD{0}".format(vData[:sectionSize]))
+      vData = vData[sectionSize:]
+      sectionID = vData[0]
+      cnt = cnt + sectionSize
+    print(sDict)
   else:
+    print (sectionID)
     cnt = 0
     tempOut = {}
+  
+  # print(sDict)
 
   return (cnt , sDict)
