@@ -119,7 +119,7 @@ def readDataByState(ctry,state,sYear,eYear,folder):
   """Reading in data given by state
       Called using readDataByState(country,state,starting_year,ending_year,data_folder)
   """
-
+  # (Todo): Not completed the read in of all data by state
   # adjusting ending year to be able to be used in range 
   eYear = eYear + 1 
 
@@ -143,6 +143,7 @@ def readDataByState(ctry,state,sYear,eYear,folder):
       if (os.path.exists(filename)):
         fileData = readFile(filename)
         cnt = cnt + 1 
+
   print("Read in {0} for year {1}".format(str(cnt).zfill(3),yy))
       
 def readFile(filename):
@@ -152,6 +153,7 @@ def readFile(filename):
   """
   maxRecordSize = 2844;
   maxBlockLength = 8192;
+
 
   fid = open(filename,"r")
   lines = fid.read().splitlines()
@@ -233,7 +235,7 @@ def readFile(filename):
     # break;
     recordCnt = recordCnt + 1
 
-  print ("Number of recoreds read: {0}".format(len(records)))
+  print ("Number of records read: {0}".format(len(records)))
 
   fid.close()
   return records
@@ -303,6 +305,8 @@ def extractVariableData(vData):
     while (sectionID in ['Q', 'P', 'R', 'C', 'D']):
       sDict.setdefault('EQD',[]).append("EQD{0}".format(vData[:sectionSize]))
       vData = vData[sectionSize:]
+      if (len(vData) == 0): 
+          break; 
       sectionID = vData[0]
       cnt = cnt + sectionSize
     print(sDict)
@@ -314,3 +318,16 @@ def extractVariableData(vData):
   # print(sDict)
 
   return (cnt , sDict)
+
+
+def convertToMat(records):
+  """convert input records to matlab files"""
+
+  arr = np.zeros((len(records),), dtype=np.object)
+  cnt = 0 
+  for record in records:
+    arr[cnt] = record
+    cnt = cnt + 1
+  
+  return arr
+    
