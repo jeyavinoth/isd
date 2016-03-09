@@ -4,6 +4,8 @@ Created by Jeyavinoth Jeyaratnam
 
 Python module that downloads ISD data given a state and country.
 
+Data downloaded from: ftp://ftp.ncdc.noaa.gov/pub/data/noaa/
+
 It can suppot other search criteria on ISD keywords, but has not been tested. 
 
 To download the data, you have to  run the following 
