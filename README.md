@@ -1,5 +1,7 @@
 # Integrated Surface Database (ISD)
 
+Code to download, search and read in information from the ISD.
+
 Created by Jeyavinoth Jeyaratnam
 @ The City College of New York 
 
